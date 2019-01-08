@@ -5,6 +5,8 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -30,8 +32,13 @@ func (conf *Configs) LoadConfig(mode string) error {
 	if mode != "dev" && mode != "pro" {
 		return errors.New("No suitable env file found")
 	}
+	_, s, _, ok := runtime.Caller(1)
+	if !ok {
+		return errors.New("path is wrong")
+	}
+	s = filepath.Dir(s)
 
-	env, err := os.Open("config/env." + mode + ".ini")
+	env, err := os.Open(s + "/env." + mode + ".ini")
 	if err != nil {
 		return err
 	}
